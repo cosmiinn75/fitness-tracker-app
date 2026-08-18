@@ -1,7 +1,6 @@
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/home/main_page_body.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
@@ -12,58 +11,104 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.12,
-            color: AppColors.surface,
-            padding: EdgeInsets.only(
-              left: Dimensions.calculateWidth(20, context),
-              right: Dimensions.calculateWidth(20, context),
-            ),
-            margin: EdgeInsets.only(
-              bottom: Dimensions.calculateHeight(20, context),
-            ),
-            child: Container(
-              margin: EdgeInsets.only(
-                top: Dimensions.calculateHeight(40, context),
+
+      body: SafeArea(
+        child: Column(
+          children: [
+
+            // HEADER
+            Padding(
+              padding: EdgeInsets.only(
+                left: Dimensions.calculateWidth(20, context),
+                right: Dimensions.calculateWidth(20, context),
+                top: Dimensions.calculateHeight(18, context),
+                bottom: Dimensions.calculateHeight(12, context),
               ),
+
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Fitness World",
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: Dimensions.calculateHeight(24, context),
-                      fontWeight: FontWeight.bold,
+
+                  // TITLE
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "FITNESS WORLD",
+                          style: TextStyle(
+                            color: const Color(0xFF8A84FF),
+                            fontSize:
+                            Dimensions.calculateHeight(12, context),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: Dimensions.calculateHeight(5, context),
+                        ),
+
+                        Text(
+                          "Train smarter.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize:
+                            Dimensions.calculateHeight(25, context),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
+                  // PROFILE
                   Container(
-                    width: Dimensions.calculateWidth(45, context),
-                    height: Dimensions.calculateHeight(45, context),
+                    width: Dimensions.calculateWidth(46, context),
+                    height: Dimensions.calculateHeight(46, context),
+
                     decoration: BoxDecoration(
+                      color: const Color(0xFF1D1F6E),
+
                       borderRadius: BorderRadius.circular(
                         Dimensions.calculateHeight(15, context),
                       ),
-                      color: AppColors.accent,
+
+                      border: Border.all(
+                        color: const Color(0xFF34368A),
+                      ),
                     ),
-                    child: Icon(Icons.person, color: AppColors.textPrimary),
+
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: const Color(0xFFAAA6FF),
+                      size: Dimensions.calculateHeight(24, context),
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          MainPageBody()
-        ],
+
+            // SEPARATOR
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Dimensions.calculateWidth(20, context),
+              ),
+              child: Divider(
+                color: Colors.white.withValues(alpha: 0.07),
+                height: 1,
+              ),
+            ),
+
+            // PAGE CONTENT
+            const Expanded(
+              child: MainPageBody(),
+            ),
+          ],
+        ),
       ),
     );
   }

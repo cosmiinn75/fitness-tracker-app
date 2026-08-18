@@ -1,12 +1,12 @@
 import 'package:fitness_mvp/data/model/workout_exercise_draft.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/widgets/exercise_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/model/exercise_definition.dart';
 import '../../data/model/exercise_set_draft.dart';
 import '../../helper/dimensions.dart';
+import 'add_exercises_page.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage({super.key});
@@ -16,119 +16,577 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-
   List<WorkoutExerciseDraft> exercises = [];
-
-  @override
-  void initState() {
-    
-    super.initState();
-    exercises.add(
-      WorkoutExerciseDraft(
-        exerciseNumber: 1,
-        exerciseDefinition: ExerciseDefinition(
-          id: 1,
-          name: "Bench Press",
-          muscleGroup: "Chest",
-        ),
-        sets: [
-          ExerciseSetDraft(setNumber: 1),
-          ExerciseSetDraft(setNumber: 2),
-        ],
-      ),
-
-    );
-    exercises.add(
-      WorkoutExerciseDraft(
-        exerciseNumber: 1,
-        exerciseDefinition: ExerciseDefinition(
-          id: 1,
-          name: "Bench Press",
-          muscleGroup: "Chest",
-        ),
-        sets: [
-          ExerciseSetDraft(setNumber: 1),
-          ExerciseSetDraft(setNumber: 2),
-        ],
-      ),
-
-    );
-  }
+  bool isFinishedPressed = false;
+  bool isExitPressed = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+
       body: SafeArea(
         child: ListView.builder(
+          padding: EdgeInsets.only(
+            bottom: Dimensions.calculateHeight(25, context),
+          ),
+
           itemCount: exercises.length + 2,
+
           itemBuilder: (context, index) {
 
-
+            // HEADER
             if (index == 0) {
-              return Container(
-                margin: EdgeInsets.only(
-                  top: Dimensions.calculateHeight(30, context),
-                  bottom: Dimensions.calculateHeight(20, context),
-                ),
+              return Padding(
                 padding: EdgeInsets.only(
                   left: Dimensions.calculateWidth(20, context),
+                  right: Dimensions.calculateWidth(20, context),
+                  top: Dimensions.calculateHeight(25, context),
+                  bottom: Dimensions.calculateHeight(20, context),
                 ),
-                child: Text(
-                  "Afternoon workout",
-                  style: TextStyle(
-                    fontSize: Dimensions.calculateHeight(32, context),
-                    color: AppColors.textPrimary,
-                  ),
+
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "WORKOUT",
+                      style: TextStyle(
+                        color: const Color(0xFF8A84FF),
+                        fontSize: Dimensions.calculateHeight(13, context),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: Dimensions.calculateHeight(8, context),
+                    ),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Afternoon workout",
+                            style: TextStyle(
+                              fontSize:
+                              Dimensions.calculateHeight(28, context),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                            Dimensions.calculateWidth(12, context),
+                            vertical:
+                            Dimensions.calculateHeight(7, context),
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1D1F6E),
+                            borderRadius: BorderRadius.circular(
+                              Dimensions.calculateHeight(15, context),
+                            ),
+                            border: Border.all(
+                              color: const Color(0xFF34368A),
+                            ),
+                          ),
+                          child: Text(
+                            "${exercises.length} ${exercises.length == 1 ? "exercise" : "exercises"}",
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.65),
+                              fontSize:
+                              Dimensions.calculateHeight(13, context),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(
+                      height: Dimensions.calculateHeight(7, context),
+                    ),
+
+                    Text(
+                      "Track your sets, weight, reps and RIR",
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: Dimensions.calculateHeight(15, context),
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
 
-
+            // ADD EXERCISES
             if (index == exercises.length + 1) {
-              return Padding(
-                padding: EdgeInsets.all(
-                  Dimensions.calculateWidth(20, context),
-                ),
-                  child: Container(
-                    width: double.maxFinite,
-                    height: Dimensions.calculateHeight(35, context),
+              return Column(
+                children: [
 
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: AppColors.surface.withValues(alpha: 0.8),
-                            offset: Offset(0, 5),
-                            blurRadius: 3,
-                            spreadRadius: 3
-
-                        )
-                      ],
-                      borderRadius: BorderRadius.circular(
-                        Dimensions.calculateHeight(15, context),
-
+                  // EMPTY STATE
+                  if (exercises.isEmpty)
+                    Container(
+                      width: double.maxFinite,
+                      margin: EdgeInsets.only(
+                        left: Dimensions.calculateWidth(20, context),
+                        right: Dimensions.calculateWidth(20, context),
+                        bottom: Dimensions.calculateHeight(20, context),
                       ),
-                      color: AppColors.textPrimary,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "+ Add Exercises",
-                        style: TextStyle(
-                          fontSize: Dimensions.calculateHeight(20, context),
-                          color: AppColors.accent,
+                      padding: EdgeInsets.symmetric(
+                        vertical:
+                        Dimensions.calculateHeight(35, context),
+                        horizontal:
+                        Dimensions.calculateWidth(20, context),
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D1F6E),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.calculateHeight(20, context),
+                        ),
+                        border: Border.all(
+                          color: const Color(0xFF34368A),
                         ),
                       ),
+
+                      child: Column(
+                        children: [
+                          Container(
+                            width: Dimensions.calculateWidth(55, context),
+                            height:
+                            Dimensions.calculateHeight(55, context),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF6C63FF)
+                                  .withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.fitness_center,
+                              color: const Color(0xFF8A84FF),
+                              size:
+                              Dimensions.calculateHeight(26, context),
+                            ),
+                          ),
+
+                          SizedBox(
+                            height:
+                            Dimensions.calculateHeight(15, context),
+                          ),
+
+                          Text(
+                            "No exercises yet",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize:
+                              Dimensions.calculateHeight(20, context),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          SizedBox(
+                            height:
+                            Dimensions.calculateHeight(7, context),
+                          ),
+
+                          Text(
+                            "Add your first exercise to start building your workout.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color:
+                              Colors.white.withValues(alpha: 0.45),
+                              fontSize:
+                              Dimensions.calculateHeight(14, context),
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  GestureDetector(
+                    onTap: () async {
+                      final Set<int> unavailableExercises = exercises.map((e)=> e.exerciseDefinition.id).toSet();
+                      final List<ExerciseDefinition>? newExercises =
+                      await Navigator.push<List<ExerciseDefinition>>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                          AddExercisesPage(unavailableExercises: unavailableExercises ),
+                        ),
+                      );
+
+                      if (newExercises != null) {
+                        setState(() {
+                          for (int i = 0;
+                          i < newExercises.length;
+                          i++) {
+                            exercises.add(
+                              WorkoutExerciseDraft(
+                                exerciseNumber:
+                                exercises.length + 1,
+                                sets: [
+                                  ExerciseSetDraft(setNumber: 1),
+                                  ExerciseSetDraft(setNumber: 2),
+                                ],
+                                exerciseDefinition:
+                                newExercises[i],
+                              ),
+                            );
+                          }
+                        });
+                      }
+                    },
+
+                    child: Container(
+                      height:
+                      Dimensions.calculateHeight(52, context),
+                      width: double.maxFinite,
+
+                      margin: EdgeInsets.symmetric(
+                        horizontal:
+                        Dimensions.calculateWidth(20, context),
+                        vertical: Dimensions.calculateHeight(10, context)
+                      ),
+
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6C63FF),
+
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.calculateHeight(17, context),
+                        ),
+
+                        border: Border.all(
+                          color: const Color(0xFF8A84FF),
+                        ),
+
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6C63FF)
+                                .withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size:
+                            Dimensions.calculateHeight(24, context),
+                          ),
+
+                          SizedBox(
+                            width:
+                            Dimensions.calculateWidth(7, context),
+                          ),
+
+                          Text(
+                            "Add Exercises",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize:
+                              Dimensions.calculateHeight(17, context),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-
+                ],
               );
             }
 
 
-            return ExerciseCard(
-              workoutExerciseDraft: exercises[index - 1],
+            return Dismissible(
+              direction: DismissDirection.endToStart,
+              key: ObjectKey(exercises[index-1]),
+              onDismissed: (direction) {
+                setState(() {
+                  exercises.removeAt(index-1);
+
+                  for (
+                  int i = index-1;
+                  i < exercises.length;
+                  i++
+                  ) {
+                    exercises[i].exerciseNumber = i+1;
+                  }
+                });
+              },
+
+              background: Container(
+                margin: EdgeInsets.only(
+                  bottom: Dimensions.calculateHeight(8, context),
+                ),
+
+                padding: EdgeInsets.only(
+                  right: Dimensions.calculateWidth(18, context),
+                ),
+
+                alignment: Alignment.centerRight,
+
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB83A4B),
+
+                  borderRadius: BorderRadius.circular(
+                    Dimensions.calculateHeight(14, context),
+                  ),
+                ),
+
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.white,
+                  size: Dimensions.calculateHeight(24, context),
+                ),
+              ),
+              child: ExerciseCard(
+                workoutExerciseDraft: exercises[index - 1],
+              ),
             );
           },
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          padding: EdgeInsets.only(
+            left: Dimensions.calculateWidth(20, context),
+            right: Dimensions.calculateWidth(20, context),
+            top: Dimensions.calculateHeight(12, context),
+            bottom: Dimensions.calculateHeight(12, context),
+          ),
+
+          decoration: BoxDecoration(
+            color: AppColors.background,
+
+            border: Border(
+              top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
+            ),
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 15,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              // FINISH WORKOUT
+              GestureDetector(
+                onTapDown: (_) {
+                  if (exercises.isNotEmpty) {
+                    setState(() {
+                      isFinishedPressed = true;
+                    });
+                  }
+                },
+
+                onTapUp: (_) {
+                  if (exercises.isNotEmpty) {
+                    setState(() {
+                      isFinishedPressed = false;
+                    });
+                  }
+                },
+
+                onTapCancel: () {
+                  setState(() {
+                    isFinishedPressed = false;
+                  });
+                },
+
+                onTap: exercises.isNotEmpty
+                    ? () {
+                  // finish workout
+                }
+                    : null,
+
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 120),
+                  scale: isFinishedPressed ? 0.97 : 1,
+
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+
+                    width: double.maxFinite,
+                    height: Dimensions.calculateHeight(52, context),
+
+                    decoration: BoxDecoration(
+                      color: exercises.isEmpty
+                          ? const Color(0xFF1D1F6E)
+                          : isFinishedPressed
+                          ? const Color(0xFF188A5A)
+                          : const Color(0xFF22A06B),
+
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.calculateHeight(16, context),
+                      ),
+
+                      border: Border.all(
+                        color: exercises.isEmpty
+                            ? const Color(0xFF34368A)
+                            : const Color(0xFF35C98B),
+                      ),
+
+                      boxShadow: exercises.isNotEmpty
+                          ? [
+                        BoxShadow(
+                          color: const Color(0xFF22A06B)
+                              .withValues(alpha: 0.22),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                          : [],
+                    ),
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.check_rounded,
+                          size: Dimensions.calculateHeight(23, context),
+                          color: exercises.isNotEmpty
+                              ? Colors.white
+                              : Colors.white.withValues(alpha: 0.35),
+                        ),
+
+                        SizedBox(
+                          width: Dimensions.calculateWidth(8, context),
+                        ),
+
+                        Text(
+                          "Finish Workout",
+                          style: TextStyle(
+                            color: exercises.isNotEmpty
+                                ? Colors.white
+                                : Colors.white.withValues(alpha: 0.35),
+                            fontSize:
+                            Dimensions.calculateHeight(17, context),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                height: Dimensions.calculateHeight(10, context),
+              ),
+
+              // CANCEL WORKOUT
+              GestureDetector(
+                onTapDown: (_) {
+                  if (exercises.isNotEmpty) {
+                    setState(() {
+                      isExitPressed = true;
+                    });
+                  }
+                },
+
+                onTapUp: (_) {
+                  if (exercises.isNotEmpty) {
+                    setState(() {
+                      isExitPressed = false;
+                    });
+                  }
+                },
+
+                onTapCancel: () {
+                  setState(() {
+                    isExitPressed = false;
+                  });
+                },
+
+                onTap: exercises.isNotEmpty
+                    ? () {
+                  // cancel workout
+                }
+                    : null,
+
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 120),
+                  scale: isExitPressed ? 0.97 : 1,
+
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+
+                    width: double.maxFinite,
+                    height: Dimensions.calculateHeight(46, context),
+
+                    decoration: BoxDecoration(
+                      color: exercises.isEmpty
+                          ? Colors.transparent
+                          : isExitPressed
+                          ? const Color(0xFF962F3D)
+                          : const Color(0xFFB83A4B)
+                          .withValues(alpha: 0.10),
+
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.calculateHeight(15, context),
+                      ),
+
+                      border: Border.all(
+                        color: exercises.isEmpty
+                            ? const Color(0xFF34368A)
+                            : const Color(0xFFD65A68)
+                            .withValues(alpha: 0.65),
+                      ),
+                    ),
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.close_rounded,
+                          size: Dimensions.calculateHeight(20, context),
+                          color: exercises.isEmpty
+                              ? Colors.white.withValues(alpha: 0.25)
+                              : isExitPressed
+                              ? Colors.white
+                              : const Color(0xFFE87986),
+                        ),
+
+                        SizedBox(
+                          width: Dimensions.calculateWidth(7, context),
+                        ),
+
+                        Text(
+                          "Cancel Workout",
+                          style: TextStyle(
+                            color: exercises.isEmpty
+                                ? Colors.white.withValues(alpha: 0.25)
+                                : isExitPressed
+                                ? Colors.white
+                                : const Color(0xFFE87986),
+                            fontSize:
+                            Dimensions.calculateHeight(15, context),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

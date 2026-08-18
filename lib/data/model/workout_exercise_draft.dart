@@ -3,7 +3,7 @@ import 'package:fitness_mvp/data/model/exercise_set_draft.dart';
 
 class WorkoutExerciseDraft {
 
-  final int exerciseNumber;
+  int exerciseNumber;
   final List<ExerciseSetDraft> _sets;
   final ExerciseDefinition exerciseDefinition;
 
