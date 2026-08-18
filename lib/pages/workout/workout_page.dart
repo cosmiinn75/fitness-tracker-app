@@ -1,27 +1,46 @@
+import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/model/workout_exercise_draft.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/widgets/exercise_card.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/model/exercise_definition.dart';
-import '../../data/model/exercise_set_draft.dart';
+import '../../data/model/workout_draft.dart';
 import '../../helper/dimensions.dart';
 import 'add_exercises_page.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key});
+  const WorkoutPage({super.key , required this.activeWorkoutController});
+
+  final ActiveWorkoutController activeWorkoutController;
+
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  List<WorkoutExerciseDraft> exercises = [];
+  late final WorkoutDraft workout;
+
   bool isFinishedPressed = false;
   bool isExitPressed = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    workout =
+    widget.activeWorkoutController.activeWorkout!;
+  }
+
+
+
+  @override
   Widget build(BuildContext context) {
+
+    final List<WorkoutExerciseDraft> exercises =
+        workout.exercises;
+
     return Scaffold(
       backgroundColor: AppColors.background,
 
@@ -217,24 +236,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ),
                       );
 
-                      if (newExercises != null) {
+                      if (newExercises != null && newExercises.isNotEmpty) {
                         setState(() {
-                          for (int i = 0;
-                          i < newExercises.length;
-                          i++) {
-                            exercises.add(
-                              WorkoutExerciseDraft(
-                                exerciseNumber:
-                                exercises.length + 1,
-                                sets: [
-                                  ExerciseSetDraft(setNumber: 1),
-                                  ExerciseSetDraft(setNumber: 2),
-                                ],
-                                exerciseDefinition:
-                                newExercises[i],
-                              ),
-                            );
-                          }
+                          widget.activeWorkoutController.addExercises(newExercises);
                         });
                       }
                     },
@@ -309,15 +313,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               key: ObjectKey(exercises[index-1]),
               onDismissed: (direction) {
                 setState(() {
-                  exercises.removeAt(index-1);
-
-                  for (
-                  int i = index-1;
-                  i < exercises.length;
-                  i++
-                  ) {
-                    exercises[i].exerciseNumber = i+1;
-                  }
+                widget.activeWorkoutController.removeExercise(index-1);
                 });
               },
 
@@ -347,7 +343,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 ),
               ),
               child: ExerciseCard(
-                workoutExerciseDraft: exercises[index - 1],
+                workoutExerciseDraft: exercises[index - 1], activeWorkoutController: widget.activeWorkoutController,
               ),
             );
           },
@@ -493,19 +489,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
               // CANCEL WORKOUT
               GestureDetector(
                 onTapDown: (_) {
-                  if (exercises.isNotEmpty) {
                     setState(() {
                       isExitPressed = true;
                     });
-                  }
+
                 },
 
                 onTapUp: (_) {
-                  if (exercises.isNotEmpty) {
                     setState(() {
                       isExitPressed = false;
                     });
-                  }
                 },
 
                 onTapCancel: () {
@@ -514,11 +507,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   });
                 },
 
-                onTap: exercises.isNotEmpty
-                    ? () {
-                  // cancel workout
-                }
-                    : null,
+                onTap: () {
+                  widget.activeWorkoutController.deleteActiveWorkout();
+
+                  Navigator.pop(context);
+                },
 
                 child: AnimatedScale(
                   duration: const Duration(milliseconds: 120),
@@ -531,9 +524,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     height: Dimensions.calculateHeight(46, context),
 
                     decoration: BoxDecoration(
-                      color: exercises.isEmpty
-                          ? Colors.transparent
-                          : isExitPressed
+                      color: isExitPressed
                           ? const Color(0xFF962F3D)
                           : const Color(0xFFB83A4B)
                           .withValues(alpha: 0.10),
@@ -543,9 +534,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       ),
 
                       border: Border.all(
-                        color: exercises.isEmpty
-                            ? const Color(0xFF34368A)
-                            : const Color(0xFFD65A68)
+                        color: const Color(0xFFD65A68)
                             .withValues(alpha: 0.65),
                       ),
                     ),
@@ -556,9 +545,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         Icon(
                           Icons.close_rounded,
                           size: Dimensions.calculateHeight(20, context),
-                          color: exercises.isEmpty
-                              ? Colors.white.withValues(alpha: 0.25)
-                              : isExitPressed
+                          color: isExitPressed
                               ? Colors.white
                               : const Color(0xFFE87986),
                         ),
@@ -570,9 +557,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         Text(
                           "Cancel Workout",
                           style: TextStyle(
-                            color: exercises.isEmpty
-                                ? Colors.white.withValues(alpha: 0.25)
-                                : isExitPressed
+                            color: isExitPressed
                                 ? Colors.white
                                 : const Color(0xFFE87986),
                             fontSize:

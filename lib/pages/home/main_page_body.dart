@@ -1,10 +1,12 @@
-import 'package:fitness_mvp/helper/app_colors.dart';
+import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/workout/workout_page.dart';
 import 'package:flutter/material.dart';
 
 class MainPageBody extends StatefulWidget {
-  const MainPageBody({super.key});
+  final ActiveWorkoutController activeWorkoutController;
+
+  const MainPageBody({super.key, required this.activeWorkoutController});
 
   @override
   State<MainPageBody> createState() => _MainPageBodyState();
@@ -13,6 +15,9 @@ class MainPageBody extends StatefulWidget {
 class _MainPageBodyState extends State<MainPageBody> {
   @override
   Widget build(BuildContext context) {
+    final bool isWorkoutActive =
+        widget.activeWorkoutController.activeWorkout != null;
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Dimensions.calculateWidth(20, context),
@@ -20,9 +25,7 @@ class _MainPageBodyState extends State<MainPageBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: Dimensions.calculateHeight(25, context),
-          ),
+          SizedBox(height: Dimensions.calculateHeight(25, context)),
 
           Text(
             "WORKOUT",
@@ -34,9 +37,7 @@ class _MainPageBodyState extends State<MainPageBody> {
             ),
           ),
 
-          SizedBox(
-            height: Dimensions.calculateHeight(8, context),
-          ),
+          SizedBox(height: Dimensions.calculateHeight(8, context)),
 
           Text(
             "Ready to train?",
@@ -47,9 +48,7 @@ class _MainPageBodyState extends State<MainPageBody> {
             ),
           ),
 
-          SizedBox(
-            height: Dimensions.calculateHeight(7, context),
-          ),
+          SizedBox(height: Dimensions.calculateHeight(7, context)),
 
           Text(
             "Start a workout and track every set, rep and weight.",
@@ -59,127 +58,386 @@ class _MainPageBodyState extends State<MainPageBody> {
             ),
           ),
 
-          SizedBox(
-            height: Dimensions.calculateHeight(30, context),
+          SizedBox(height: Dimensions.calculateHeight(30, context)),
+
+          isWorkoutActive ? activeWorkoutCard() : startWorkoutCard(),
+
+          SizedBox(height: Dimensions.calculateHeight(30, context)),
+        ],
+      ),
+    );
+  }
+
+  Widget startWorkoutCard() {
+    return Container(
+      width: double.maxFinite,
+
+      padding: EdgeInsets.all(Dimensions.calculateWidth(20, context)),
+
+      decoration: BoxDecoration(
+        color: const Color(0xFF1D1F6E),
+
+        borderRadius: BorderRadius.circular(
+          Dimensions.calculateHeight(22, context),
+        ),
+
+        border: Border.all(color: const Color(0xFF34368A)),
+      ),
+
+      child: Column(
+        children: [
+          Container(
+            width: Dimensions.calculateWidth(60, context),
+            height: Dimensions.calculateHeight(60, context),
+
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.18),
+
+              shape: BoxShape.circle,
+            ),
+
+            child: Icon(
+              Icons.fitness_center_rounded,
+              color: const Color(0xFF8A84FF),
+              size: Dimensions.calculateHeight(28, context),
+            ),
           ),
 
-          Container(
-            width: double.maxFinite,
-            padding: EdgeInsets.all(
-              Dimensions.calculateWidth(20, context),
+          SizedBox(height: Dimensions.calculateHeight(18, context)),
+
+          Text(
+            "Start an empty workout",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Dimensions.calculateHeight(21, context),
+              fontWeight: FontWeight.bold,
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1D1F6E),
-              borderRadius: BorderRadius.circular(
-                Dimensions.calculateHeight(22, context),
-              ),
-              border: Border.all(
-                color: const Color(0xFF34368A),
-              ),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(7, context)),
+
+          Text(
+            "Build your workout from scratch by adding exercises and sets.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.45),
+              fontSize: Dimensions.calculateHeight(14, context),
+              height: 1.4,
             ),
-            child: Column(
-              children: [
-                Container(
-                  width: Dimensions.calculateWidth(60, context),
-                  height: Dimensions.calculateHeight(60, context),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6C63FF)
-                        .withValues(alpha: 0.18),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.fitness_center_rounded,
-                    color: const Color(0xFF8A84FF),
-                    size: Dimensions.calculateHeight(28, context),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(22, context)),
+
+          GestureDetector(
+            onTap: () async {
+              widget.activeWorkoutController.startWorkout();
+
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WorkoutPage(
+                    activeWorkoutController: widget.activeWorkoutController,
                   ),
                 ),
+              );
 
-                SizedBox(
-                  height: Dimensions.calculateHeight(18, context),
+              if (mounted) {
+                setState(() {});
+              }
+            },
+
+            child: Container(
+              width: double.maxFinite,
+              height: Dimensions.calculateHeight(50, context),
+
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C63FF),
+
+                borderRadius: BorderRadius.circular(
+                  Dimensions.calculateHeight(16, context),
                 ),
 
-                Text(
-                  "Start an empty workout",
-                  style: TextStyle(
+                border: Border.all(color: const Color(0xFF8A84FF)),
+
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6C63FF).withValues(alpha: 0.25),
+
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.play_arrow_rounded,
                     color: Colors.white,
-                    fontSize: Dimensions.calculateHeight(21, context),
-                    fontWeight: FontWeight.bold,
+                    size: Dimensions.calculateHeight(24, context),
                   ),
-                ),
 
-                SizedBox(
-                  height: Dimensions.calculateHeight(7, context),
-                ),
+                  SizedBox(width: Dimensions.calculateWidth(6, context)),
 
-                Text(
-                  "Build your workout from scratch by adding exercises and sets.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
-                    fontSize: Dimensions.calculateHeight(14, context),
-                    height: 1.4,
-                  ),
-                ),
-
-                SizedBox(
-                  height: Dimensions.calculateHeight(22, context),
-                ),
-
-                GestureDetector(
-                  onTap:(){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> WorkoutPage()));
-                  },
-                  child: Container(
-                    width: double.maxFinite,
-                    height: Dimensions.calculateHeight(50, context),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6C63FF),
-                      borderRadius: BorderRadius.circular(
-                        Dimensions.calculateHeight(16, context),
-                      ),
-                      border: Border.all(
-                        color: const Color(0xFF8A84FF),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6C63FF)
-                              .withValues(alpha: 0.25),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                  Text(
+                    "Start Workout",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Dimensions.calculateHeight(17, context),
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.play_arrow_rounded,
-                          color: Colors.white,
-                          size: Dimensions.calculateHeight(24, context),
-                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                        SizedBox(
-                          width: Dimensions.calculateWidth(6, context),
-                        ),
+  Widget activeWorkoutCard() {
+    return Container(
+      width: double.maxFinite,
 
-                        Text(
-                          "Start Workout",
+      padding: EdgeInsets.all(Dimensions.calculateWidth(20, context)),
+
+      decoration: BoxDecoration(
+        color: const Color(0xFF1D1F6E),
+
+        borderRadius: BorderRadius.circular(
+          Dimensions.calculateHeight(22, context),
+        ),
+
+        border: Border.all(color: const Color(0xFF34368A)),
+      ),
+
+      child: Column(
+        children: [
+          Container(
+            width: Dimensions.calculateWidth(60, context),
+            height: Dimensions.calculateHeight(60, context),
+
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.18),
+
+              shape: BoxShape.circle,
+            ),
+
+            child: Icon(
+              Icons.fitness_center_rounded,
+              color: const Color(0xFF8A84FF),
+              size: Dimensions.calculateHeight(28, context),
+            ),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(18, context)),
+
+          Text(
+            "WORKOUT IN PROGRESS",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Dimensions.calculateHeight(21, context),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(7, context)),
+
+          Text(
+            "Continue your workout or start a new one",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.45),
+              fontSize: Dimensions.calculateHeight(14, context),
+              height: 1.4,
+            ),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(22, context)),
+
+          // CONTINUE WORKOUT
+          GestureDetector(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WorkoutPage(
+                    activeWorkoutController: widget.activeWorkoutController,
+                  ),
+                ),
+              );
+
+              if (mounted) {
+                setState(() {});
+              }
+            },
+
+            child: Container(
+              width: double.maxFinite,
+              height: Dimensions.calculateHeight(50, context),
+
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C63FF),
+
+                borderRadius: BorderRadius.circular(
+                  Dimensions.calculateHeight(16, context),
+                ),
+
+                border: Border.all(color: const Color(0xFF8A84FF)),
+
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6C63FF).withValues(alpha: 0.25),
+
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.play_circle_outline_rounded,
+                    color: Colors.white,
+                    size: Dimensions.calculateHeight(24, context),
+                  ),
+
+                  SizedBox(width: Dimensions.calculateWidth(6, context)),
+
+                  Text(
+                    "Continue Workout",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Dimensions.calculateHeight(17, context),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: Dimensions.calculateHeight(10, context)),
+
+          // START NEW WORKOUT
+          GestureDetector(
+            onTap: () async {
+              final bool? confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        Dimensions.calculateHeight(20, context),
+                      ),
+                    ),
+                    backgroundColor: const Color(0xFF1D1F6E),
+
+                    title: const Text(
+                      "Start a new workout?",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    content: Text(
+                      "Your current workout will be discarded.",
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.55),
+                      ),
+                    ),
+
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: Text(
+                          "Cancel",
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Dimensions.calculateHeight(17, context),
+                            color: Colors.white.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ),
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text(
+                          "Start New",
+                          style: TextStyle(
+                            color: Color(0xFFAAA6FF),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirmed == true) {
+                widget.activeWorkoutController.startWorkout();
+
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WorkoutPage(
+                      activeWorkoutController: widget.activeWorkoutController,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                );
 
-          SizedBox(
-            height: Dimensions.calculateHeight(30, context),
+                if (mounted) {
+                  setState(() {});
+                }
+              }
+            },
+
+            child: Container(
+              width: double.maxFinite,
+              height: Dimensions.calculateHeight(50, context),
+
+              decoration: BoxDecoration(
+                color: const Color(0xFF1D1F6E),
+
+                borderRadius: BorderRadius.circular(
+                  Dimensions.calculateHeight(16, context),
+                ),
+
+                border: Border.all(
+                  color: const Color(0xFF6C63FF).withValues(alpha: 0.55),
+                ),
+              ),
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_rounded,
+                    color: const Color(0xFFAAA6FF),
+                    size: Dimensions.calculateHeight(24, context),
+                  ),
+
+                  SizedBox(width: Dimensions.calculateWidth(6, context)),
+
+                  Text(
+                    "Start a New Workout",
+                    style: TextStyle(
+                      color: const Color(0xFFAAA6FF),
+                      fontSize: Dimensions.calculateHeight(17, context),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

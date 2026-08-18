@@ -1,4 +1,4 @@
-import 'package:fitness_mvp/data/model/exercise_set_draft.dart';
+import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/model/workout_exercise_draft.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/widgets/workout_text_field.dart';
@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ExerciseCard extends StatefulWidget {
-  const ExerciseCard({super.key, required this.workoutExerciseDraft});
+  const ExerciseCard({super.key, required this.workoutExerciseDraft, required this.activeWorkoutController});
 
   final WorkoutExerciseDraft workoutExerciseDraft;
+  final ActiveWorkoutController activeWorkoutController;
 
   @override
   State<ExerciseCard> createState() => _ExerciseCardState();
@@ -172,15 +173,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
                 onDismissed: (direction) {
                   setState(() {
-                    widget.workoutExerciseDraft.sets.removeAt(index);
-
-                    for (
-                      int i = index;
-                      i < widget.workoutExerciseDraft.sets.length;
-                      i++
-                    ) {
-                      widget.workoutExerciseDraft.sets[i].setNumber = i + 1;
-                    }
+                   widget.activeWorkoutController.removeSet(widget.workoutExerciseDraft, index);
                   });
                 },
 
@@ -265,8 +258,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
                         width: Dimensions.calculateWidth(80, context),
 
                         child: WorkoutTextField(
+                          initialValue: set.weight?.toString(),
                           hintText: "kg",
-
                           inputFormatters: [
                             TextInputFormatter.withFunction((
                               oldValue,
@@ -286,8 +279,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                           valueChanged: (value) {
                             final weight = double.tryParse(value.replaceAll(',', '.'));
 
-                            widget.workoutExerciseDraft.sets[index].weight =
-                                weight;
+                            widget.activeWorkoutController.updateWeight(widget.workoutExerciseDraft, index, weight);
                           },
                         ),
                       ),
@@ -298,7 +290,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
                         child: WorkoutTextField(
                           hintText: "10",
-
+                          initialValue: set.reps?.toString(),
                           inputFormatters: [
                             TextInputFormatter.withFunction((
                               oldValue,
@@ -321,7 +313,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                           valueChanged: (value) {
                             final reps = int.tryParse(value);
 
-                            widget.workoutExerciseDraft.sets[index].reps = reps;
+                            widget.activeWorkoutController.updateReps(widget.workoutExerciseDraft, index, reps);
                           },
                         ),
                       ),
@@ -332,7 +324,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
                         child: WorkoutTextField(
                           hintText: "1",
-
+                          initialValue: set.rir?.toString(),
                           inputFormatters: [
                             TextInputFormatter.withFunction((
                               oldValue,
@@ -355,7 +347,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                           valueChanged: (value) {
                             final rir = int.tryParse(value);
 
-                            widget.workoutExerciseDraft.sets[index].rir = rir;
+                            widget.activeWorkoutController.updateRir(widget.workoutExerciseDraft, index, rir);
                           },
                         ),
                       ),
@@ -372,11 +364,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
           GestureDetector(
             onTap: () {
               setState(() {
-                widget.workoutExerciseDraft.addSet(
-                  ExerciseSetDraft(
-                    setNumber: widget.workoutExerciseDraft.sets.length + 1,
-                  ),
-                );
+                widget.activeWorkoutController.addSet(widget.workoutExerciseDraft);
               });
             },
 

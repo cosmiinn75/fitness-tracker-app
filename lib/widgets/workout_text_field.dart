@@ -4,16 +4,18 @@ import 'package:flutter/services.dart';
 import '../helper/dimensions.dart';
 
 class WorkoutTextField extends StatefulWidget {
-  const WorkoutTextField({
+   WorkoutTextField({
     super.key,
     required this.hintText,
     required this.valueChanged,
     required this.inputFormatters,
+     this.initialValue
   });
 
   final String hintText;
   final ValueChanged<String> valueChanged;
   final List<TextInputFormatter> inputFormatters;
+  String? initialValue;
 
   @override
   State<WorkoutTextField> createState() => _WorkoutTextFieldState();
@@ -21,6 +23,23 @@ class WorkoutTextField extends StatefulWidget {
 
 class _WorkoutTextFieldState extends State<WorkoutTextField> {
   bool isFocused = false;
+
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = TextEditingController(
+      text: widget.initialValue ?? "",
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +83,7 @@ class _WorkoutTextFieldState extends State<WorkoutTextField> {
         ),
 
         child: TextField(
+          controller: _controller,
           keyboardType: const TextInputType.numberWithOptions(
             decimal: true,
           ),
