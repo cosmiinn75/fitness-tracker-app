@@ -1,12 +1,14 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/workout/workout_page.dart';
 import 'package:flutter/material.dart';
 
 class MainPageBody extends StatefulWidget {
   final ActiveWorkoutController activeWorkoutController;
+  final ExerciseController exerciseController;
 
-  const MainPageBody({super.key, required this.activeWorkoutController});
+  const MainPageBody({super.key, required this.activeWorkoutController, required this.exerciseController});
 
   @override
   State<MainPageBody> createState() => _MainPageBodyState();
@@ -136,7 +138,7 @@ class _MainPageBodyState extends State<MainPageBody> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => WorkoutPage(
-                    activeWorkoutController: widget.activeWorkoutController,
+                    activeWorkoutController: widget.activeWorkoutController,exerciseController: widget.exerciseController,
                   ),
                 ),
               );
@@ -264,7 +266,7 @@ class _MainPageBodyState extends State<MainPageBody> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => WorkoutPage(
-                    activeWorkoutController: widget.activeWorkoutController,
+                    activeWorkoutController: widget.activeWorkoutController,exerciseController: widget.exerciseController,
                   ),
                 ),
               );
@@ -389,7 +391,7 @@ class _MainPageBodyState extends State<MainPageBody> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => WorkoutPage(
-                      activeWorkoutController: widget.activeWorkoutController,
+                      activeWorkoutController: widget.activeWorkoutController,exerciseController: widget.exerciseController,
                     ),
                   ),
                 );

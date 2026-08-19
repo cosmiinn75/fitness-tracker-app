@@ -1,4 +1,5 @@
     import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
     import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/pages/exercises/view_exercises.dart';
@@ -9,10 +10,11 @@ import 'package:fitness_mvp/pages/history/history_page.dart';
 
     class HomePage extends StatefulWidget {
 
-      HomePage({super.key, required this.activeWorkoutController, required this.workoutHistoryController});
+      HomePage({super.key, required this.activeWorkoutController, required this.workoutHistoryController, required this.exerciseController});
 
       ActiveWorkoutController activeWorkoutController;
       WorkoutHistoryController workoutHistoryController;
+      ExerciseController exerciseController;
 
       @override
       State<HomePage> createState() => _HomePageState();
@@ -28,8 +30,8 @@ import 'package:fitness_mvp/pages/history/history_page.dart';
 
         late final List<Widget> pages = [
 
-          MainPage(activeWorkoutController: widget.activeWorkoutController),
-          ViewExercisesPage(workoutHistoryController : widget.workoutHistoryController),
+          MainPage(activeWorkoutController: widget.activeWorkoutController, exerciseController: widget.exerciseController,),
+          ViewExercisesPage(workoutHistoryController : widget.workoutHistoryController, exerciseController: widget.exerciseController,),
           HistoryPage(workoutHistoryController: widget.workoutHistoryController)
         ];
 

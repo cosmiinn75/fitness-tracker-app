@@ -1,4 +1,5 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/data/model/workout_exercise_draft.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/widgets/exercise_card.dart';
@@ -10,9 +11,10 @@ import '../../helper/dimensions.dart';
 import 'add_exercises_page.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key , required this.activeWorkoutController});
+  const WorkoutPage({super.key , required this.activeWorkoutController, required this.exerciseController});
 
   final ActiveWorkoutController activeWorkoutController;
+  final ExerciseController exerciseController;
 
 
   @override
@@ -256,7 +258,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                          AddExercisesPage(unavailableExercises: unavailableExercises ),
+                          AddExercisesPage(unavailableExercises: unavailableExercises , exerciseController: widget.exerciseController,),
                         ),
                       );
 

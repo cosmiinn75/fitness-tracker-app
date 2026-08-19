@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/data/storage/active_workout_storage.dart';
+import 'package:fitness_mvp/pages/auth/login_page.dart';
 import 'package:fitness_mvp/pages/home/home_page.dart';
 import 'package:fitness_mvp/pages/home/main_page.dart';
 import 'package:flutter/material.dart';
@@ -15,19 +19,21 @@ void main() async{
   final activeWorkoutStorage =ActiveWorkoutStorage(sharedPreferences: sharedPreferences);
 
   final workoutHistoryController = WorkoutHistoryController();
+  final exerciseController = ExerciseController();
 
   final activeWorkoutController = ActiveWorkoutController(activeWorkoutStorage: activeWorkoutStorage , workoutHistoryController: workoutHistoryController);
 
   activeWorkoutController.loadActiveWorkout();
 
-  runApp(MyApp(activeWorkoutController: activeWorkoutController ,workoutHistoryController: workoutHistoryController,));
+  runApp(MyApp(activeWorkoutController: activeWorkoutController ,workoutHistoryController: workoutHistoryController,exerciseController: exerciseController,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.activeWorkoutController , required this.workoutHistoryController});
+  const MyApp({super.key, required this.activeWorkoutController , required this.workoutHistoryController, required this.exerciseController});
 
   final ActiveWorkoutController activeWorkoutController;
   final WorkoutHistoryController workoutHistoryController;
+  final ExerciseController exerciseController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +60,8 @@ class MyApp extends StatelessWidget {
         ),
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomePage(activeWorkoutController : activeWorkoutController, workoutHistoryController: workoutHistoryController),
+      home:LoginPage()
+      // home: HomePage(activeWorkoutController : activeWorkoutController, workoutHistoryController: workoutHistoryController, exerciseController: exerciseController,),
     );
   }
 }

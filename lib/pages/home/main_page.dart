@@ -1,13 +1,15 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/home/main_page_body.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
-   MainPage({super.key, required this.activeWorkoutController});
+   MainPage({super.key, required this.activeWorkoutController, required this.exerciseController});
 
   ActiveWorkoutController activeWorkoutController;
+  ExerciseController exerciseController;
   @override
   State<MainPage> createState() => _MainPageState();
 }
@@ -107,7 +109,7 @@ class _MainPageState extends State<MainPage> {
 
             // PAGE CONTENT
             Expanded(
-              child: MainPageBody(activeWorkoutController : widget.activeWorkoutController),
+              child: MainPageBody(activeWorkoutController : widget.activeWorkoutController, exerciseController: widget.exerciseController,),
             ),
           ],
         ),
