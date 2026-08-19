@@ -8,4 +8,12 @@ class WorkoutHistoryController {
     workouts.insert(0, workout);
   }
 
+  List<WorkoutDraft> getWorkoutsForExercise(int exerciseId){
+    return workouts.where(
+        (workout) {
+          return workout.exercises.any((exercise) => exercise.exerciseDefinition.id == exerciseId);
+        }
+    ).toList();
+  }
+
 }

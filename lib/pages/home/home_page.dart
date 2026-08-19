@@ -1,6 +1,7 @@
     import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
     import 'package:fitness_mvp/helper/app_colors.dart';
+import 'package:fitness_mvp/pages/exercises/view_exercises.dart';
 import 'package:fitness_mvp/pages/history/history_page.dart';
     import 'package:fitness_mvp/pages/home/main_page.dart';
     import 'package:fitness_mvp/pages/workout/workout_page.dart';
@@ -28,15 +29,7 @@ import 'package:fitness_mvp/pages/history/history_page.dart';
         late final List<Widget> pages = [
 
           MainPage(activeWorkoutController: widget.activeWorkoutController),
-          const Center
-            (
-            child: Text(
-              "Exercises",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
+          ViewExercisesPage(workoutHistoryController : widget.workoutHistoryController),
           HistoryPage(workoutHistoryController: widget.workoutHistoryController)
         ];
 
