@@ -22,6 +22,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     "Legs",
     "Core",
   ];
+  String searchQuery = "";
 
   int? selectedMuscleGroup;
   bool isRemovePressed = false;
@@ -123,16 +124,16 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<ExerciseDefinition> filteredExercises =
-    selectedMuscleGroup == null
-        ? mockExercises
-        : mockExercises
-        .where(
-          (exercise) =>
-      exercise.muscleGroup ==
-          muscleGroups[selectedMuscleGroup!],
-    )
-        .toList();
+      final List<ExerciseDefinition> filteredExercises =
+          mockExercises
+      .where((exercise) {
+            bool matchesSearch = exercise.name.toLowerCase().contains(searchQuery.trim().toLowerCase());
+
+            bool matchesMuscleGroup = selectedMuscleGroup == null || exercise.muscleGroup == muscleGroups[selectedMuscleGroup!];
+
+
+            return matchesMuscleGroup && matchesSearch;
+          }).toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -289,6 +290,11 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   ),
                 ),
                 child: TextField(
+                  onChanged: (value){
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
                   style: const TextStyle(
                     color: Colors.white,
                   ),

@@ -24,13 +24,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   bool isFinishedPressed = false;
   bool isExitPressed = false;
+  late final TextEditingController workoutNameController;
 
   @override
   void initState() {
     super.initState();
 
+
     workout =
     widget.activeWorkoutController.activeWorkout!;
+
+    workoutNameController = TextEditingController(
+        text:workout.workoutName
+    );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    workoutNameController.dispose();
+    super.dispose();
   }
 
 
@@ -84,8 +97,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            "Afternoon workout",
+                          child: TextField(
+                            controller: workoutNameController,
+                            onChanged: (value){
+                                widget.activeWorkoutController.updateWorkoutName(value);
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              counterText: "",
+                              hintText: "Workout name",
+                              hintStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.35),
+                              ),
+                            ),
                             style: TextStyle(
                               fontSize:
                               Dimensions.calculateHeight(28, context),
@@ -405,11 +429,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   });
                 },
 
-                onTap: exercises.isNotEmpty
-                    ? () {
-                  // finish workout
-                }
-                    : null,
+                onTap:  () {
+                    final error = widget.activeWorkoutController.finishWorkout();
+                    if(error != null){
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+                      return;
+                    }
+                    Navigator.pop(context);
+                },
 
                 child: AnimatedScale(
                   duration: const Duration(milliseconds: 120),

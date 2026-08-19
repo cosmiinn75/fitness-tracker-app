@@ -1,3 +1,4 @@
+import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/data/model/exercise_definition.dart';
 import 'package:fitness_mvp/data/model/exercise_set_draft.dart';
 import 'package:fitness_mvp/data/model/workout_draft.dart';
@@ -8,8 +9,9 @@ class ActiveWorkoutController {
 
   WorkoutDraft? activeWorkout;
   final ActiveWorkoutStorage activeWorkoutStorage;
+  final WorkoutHistoryController workoutHistoryController;
 
-  ActiveWorkoutController({ required this.activeWorkoutStorage, this.activeWorkout});
+  ActiveWorkoutController({ required this.activeWorkoutStorage, this.activeWorkout, required this.workoutHistoryController});
 
   void saveActiveWorkout(){
     if(activeWorkout == null){
@@ -29,6 +31,10 @@ class ActiveWorkoutController {
     activeWorkoutStorage.deleteActiveWorkout();
   }
 
+  void updateWorkoutName(String newName){
+      activeWorkout!.workoutName = newName;
+      saveActiveWorkout();
+  }
 
   void startWorkout() {
     activeWorkout = WorkoutDraft(
@@ -98,6 +104,8 @@ class ActiveWorkoutController {
     saveActiveWorkout();
   }
 
+
+
   void updateReps(WorkoutExerciseDraft exercise,int index,int? reps){
     for (var ex in activeWorkout!.exercises) {
       if(ex == exercise){
@@ -119,5 +127,50 @@ class ActiveWorkoutController {
     saveActiveWorkout();
   }
 
+  String? finishWorkout(){
+
+      String? error = validateWorkout();
+
+      if(error != null){
+        return error;
+      }
+
+      if(activeWorkout!.workoutName.trim().isEmpty){
+        activeWorkout!.workoutName = "Afternoon workout";
+      }
+
+      workoutHistoryController.addWorkout(activeWorkout!);
+
+      deleteActiveWorkout();
+
+      return null;
+
+
+
+  }
+    String? validateWorkout(){
+
+    if(activeWorkout == null){
+      return "No active workout.";
+    }
+
+    if(activeWorkout!.exercises.isEmpty){
+      return "Add at least one exercise.";
+    }
+
+    for(final exercise in activeWorkout!.exercises){
+      if(exercise.sets.isEmpty){
+        return "${exercise.exerciseDefinition.name} has no sets.";
+      }
+
+      final bool hasCompletedSet = exercise.sets.any((set) => set.reps != null && set.reps! > 0);
+
+      if(!hasCompletedSet){
+        return "Complete at least one set for ${exercise.exerciseDefinition.name}.";
+      }
+
+    }
+        return null;
+    }
 
 }

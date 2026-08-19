@@ -1,14 +1,17 @@
     import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
     import 'package:fitness_mvp/helper/app_colors.dart';
+import 'package:fitness_mvp/pages/history/history_page.dart';
     import 'package:fitness_mvp/pages/home/main_page.dart';
     import 'package:fitness_mvp/pages/workout/workout_page.dart';
     import 'package:flutter/material.dart';
 
     class HomePage extends StatefulWidget {
 
-      HomePage({super.key, required this.activeWorkoutController});
+      HomePage({super.key, required this.activeWorkoutController, required this.workoutHistoryController});
 
       ActiveWorkoutController activeWorkoutController;
+      WorkoutHistoryController workoutHistoryController;
 
       @override
       State<HomePage> createState() => _HomePageState();
@@ -17,30 +20,26 @@
     class _HomePageState extends State<HomePage> {
       int _selectedIndex = 0;
 
-      late final List<Widget> pages = [
 
-      MainPage(activeWorkoutController: widget.activeWorkoutController),
-      const Center
-      (
-      child: Text(
-      "Exercises",
-      style: TextStyle(
-      color: Colors.white,
-      ),
-      ),
-      ),
-      const Center(
-      child: Text(
-      "History",
-      style: TextStyle(
-      color: Colors.white,
-      ),
-      ),
-      ),
-      ];
 
       @override
       Widget build(BuildContext context) {
+
+        late final List<Widget> pages = [
+
+          MainPage(activeWorkoutController: widget.activeWorkoutController),
+          const Center
+            (
+            child: Text(
+              "Exercises",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          HistoryPage(workoutHistoryController: widget.workoutHistoryController)
+        ];
+
       return Scaffold(
       backgroundColor: AppColors.background,
 
