@@ -1,29 +1,32 @@
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
-import 'package:fitness_mvp/pages/auth/signup_page.dart';
+import 'package:fitness_mvp/pages/auth/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final emailController = TextEditingController();
 
   bool obscurePassword = true;
   bool isLoading = false;
   bool isUsernameFocused = false;
   bool isPasswordFocused = false;
+  bool isEmailFocused = false ;
 
   @override
   void dispose() {
     usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -61,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: Dimensions.calculateHeight(20, context)),
             Text(
-              "Welcome back",
+              "Welcome to Fitness World",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: Dimensions.calculateHeight(30, context),
@@ -70,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: Dimensions.calculateHeight(20, context)),
             Text(
-              "Sign in to continue your fitness journey",
+              "Sign up to start your fitness journey",
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.45),
                 fontWeight: FontWeight.bold,
@@ -103,6 +106,31 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          "Email",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Dimensions.calculateHeight(24, context),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: Dimensions.calculateHeight(5, context),
+                        ),
+                        _textField(
+                          hintText: "user@example.com",
+                          obscureText: false,
+                          controller: emailController,
+                          isFocused: isEmailFocused,
+                          onFocusChange: (value) {
+                            setState(() {
+                              isEmailFocused = value;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: Dimensions.calculateHeight(20, context),
+                        ),
                         Text(
                           "Username",
                           style: TextStyle(
@@ -158,13 +186,27 @@ class _LoginPageState extends State<LoginPage> {
 
                       final String password = passwordController.text;
 
-                      if (username.isEmpty || password.isEmpty) {
+                      final String email = emailController.text.trim();
+
+                      if (username.isEmpty || password.isEmpty || email.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Please complete all fields."),
                           ),
                         );
                         return;
+                      }
+
+
+                        if(!isValidEmail(email)){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Please enter a valid email",
+                              ),
+                            ),
+                          );
+                          return;
                         }
 
                         if (!isValidUsername(username)) {
@@ -179,7 +221,8 @@ class _LoginPageState extends State<LoginPage> {
                         }
 
 
-                      // authController.login(email, password);
+
+                      // authController.signup(email, password);
                     },
 
                     child: Container(
@@ -195,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       child: Center(
                         child: Text(
-                          "Sign in",
+                          "Sign up",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: Dimensions.calculateHeight(17, context),
@@ -214,16 +257,16 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: Dimensions.calculateHeight(15, context),
                         ),
                         children: [
-                          TextSpan(text: "Don't have an account? "),
+                          TextSpan(text: "Already have an account? "),
                           TextSpan(
-                            text: "Sign up here",
+                            text: "Sign in here",
                             style: TextStyle(
                               color: AppColors.accent.withValues(alpha: 0.65),
                               fontSize: Dimensions.calculateHeight(15, context),
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> SignupPage()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                               },
                           ),
                         ],
@@ -313,5 +356,13 @@ class _LoginPageState extends State<LoginPage> {
     return username.length >= 3 &&
         username.length <= 30 &&
         usernameRegex.hasMatch(username);
+  }
+
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(
+      r'^[\w\.-]+@[\w\.-]+\.\w+$',
+    );
+
+    return emailRegex.hasMatch(email);
   }
 }

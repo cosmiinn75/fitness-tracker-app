@@ -1,13 +1,17 @@
 import 'dart:math';
 
+import 'package:fitness_mvp/data/api/api_client.dart';
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/controller/exercise_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/data/storage/active_workout_storage.dart';
+import 'package:fitness_mvp/data/storage/token_storage.dart';
 import 'package:fitness_mvp/pages/auth/login_page.dart';
 import 'package:fitness_mvp/pages/home/home_page.dart';
 import 'package:fitness_mvp/pages/home/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'helper/no_white_flash_transitiona.dart';
@@ -17,6 +21,11 @@ void main() async{
 
   final sharedPreferences = await SharedPreferences.getInstance();
   final activeWorkoutStorage =ActiveWorkoutStorage(sharedPreferences: sharedPreferences);
+  
+  final secureStorage = FlutterSecureStorage();
+  final tokenStorage = TokenStorage(secureStorage: secureStorage);
+  
+  final apiClient = ApiClient(baseUrl: "http://172.29.64.1:8080/api", tokenStorage: tokenStorage, client: http.Client());
 
   final workoutHistoryController = WorkoutHistoryController();
   final exerciseController = ExerciseController();
