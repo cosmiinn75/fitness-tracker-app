@@ -1,12 +1,28 @@
+import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
+import 'package:fitness_mvp/data/controller/auth_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_controller.dart';
+import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/auth/signup_page.dart';
+import 'package:fitness_mvp/pages/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({
+    super.key,
+    required this.authController,
+    required this.exerciseController,
+    required this.activeWorkoutController,
+    required this.workoutHistoryController,
+  });
+
+  final AuthController authController;
+  final WorkoutHistoryController workoutHistoryController;
+  final ActiveWorkoutController activeWorkoutController;
+  final ExerciseController exerciseController;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -139,9 +155,10 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: Dimensions.calculateHeight(5, context),
                         ),
-                        _textField(
+                        _passwordTextField(
                           hintText: "your_password",
-                          obscureText: true,
+                          obscureText: obscurePassword,
+                          isPasswordField: true,
                           controller: passwordController,
                           isFocused: isPasswordFocused,
                           onFocusChange: (value) {
@@ -153,7 +170,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: Dimensions.calculateHeight(40, context)),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+
+
+
                       final String username = usernameController.text.trim();
 
                       final String password = passwordController.text;
@@ -165,21 +185,51 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                         return;
-                        }
+                      }
 
-                        if (!isValidUsername(username)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Username must be between 3-30 characters and contain only letters, numbers and ._",
-                              ),
+                      if (!isValidUsername(username)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Username must be between 3-30 characters and contain only letters, numbers and ._",
                             ),
-                          );
-                          return;
-                        }
+                          ),
+                        );
+                        return;
+                      }
+                      setState(() {
+                        isLoading = true;
+                      });
 
+                      String? error = await widget.authController.login(
+                        username,
+                        password,
+                      );
 
-                      // authController.login(email, password);
+                      if (!mounted) return;
+
+                      setState(() {
+                        isLoading = false;
+                      });
+
+                      if (error == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(
+                              activeWorkoutController:
+                                  widget.activeWorkoutController,
+                              workoutHistoryController:
+                                  widget.workoutHistoryController,
+                              exerciseController: widget.exerciseController,
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(error)));
+                      }
                     },
 
                     child: Container(
@@ -194,7 +244,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
                       child: Center(
-                        child: Text(
+                        child: isLoading ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          )
+                        ): Text(
                           "Sign in",
                           style: TextStyle(
                             color: Colors.white,
@@ -223,7 +280,20 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> SignupPage()));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SignupPage(
+                                      authController: widget.authController,
+                                      activeWorkoutController:
+                                          widget.activeWorkoutController,
+                                      workoutHistoryController:
+                                          widget.workoutHistoryController,
+                                      exerciseController:
+                                          widget.exerciseController,
+                                    ),
+                                  ),
+                                );
                               },
                           ),
                         ],
@@ -242,6 +312,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _textField({
     required String hintText,
     required TextEditingController controller,
+    bool isPasswordField = false,
     required bool obscureText,
     required bool isFocused,
     required ValueChanged<bool> onFocusChange,
@@ -271,18 +342,95 @@ class _LoginPageState extends State<LoginPage> {
 
           boxShadow: isFocused
               ? [
-                  BoxShadow(
-                    color: const Color(0xFF6C63FF).withValues(alpha: 0.18),
-                    blurRadius: 8,
-                  ),
-                ]
+            BoxShadow(
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.18),
+              blurRadius: 8,
+            ),
+          ]
               : [],
         ),
 
-        child: TextField(
+        child:TextField(
+            controller: controller,
+            obscureText: obscureText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Dimensions.calculateHeight(15, context),
+            ),
+
+            decoration: InputDecoration(
+              hintText: hintText,
+              suffixIcon: isPasswordField ? IconButton(
+                icon:  Icon(obscurePassword ? Icons.visibility_off : Icons.visibility),
+                color: Colors.white54,
+                onPressed: (){
+                  setState(() {
+                    this.obscurePassword = !this.obscurePassword;
+                  });
+                },) : null,
+              hintStyle: TextStyle(
+                color: Colors.white.withValues(alpha: 0.28),
+                fontSize: Dimensions.calculateHeight(14, context),
+              ),
+
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: Dimensions.calculateWidth(15, context),
+              ),
+
+              border: InputBorder.none,
+            ),
+          ),
+
+      ),
+    );
+  }
+
+
+  Widget _passwordTextField({
+    required String hintText,
+    required TextEditingController controller,
+    bool isPasswordField = false,
+    required bool obscureText,
+    required bool isFocused,
+    required ValueChanged<bool> onFocusChange,
+  }) {
+    return Focus(
+      onFocusChange: onFocusChange,
+
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+
+        width: double.maxFinite,
+        height: Dimensions.calculateHeight(48, context),
+
+        decoration: BoxDecoration(
+          color: isFocused ? const Color(0xFF25277A) : const Color(0xFF181A61),
+
+          borderRadius: BorderRadius.circular(
+            Dimensions.calculateHeight(12, context),
+          ),
+
+          border: Border.all(
+            color: isFocused
+                ? const Color(0xFF8A84FF)
+                : const Color(0xFF34368A),
+            width: isFocused ? 1.5 : 1,
+          ),
+
+          boxShadow: isFocused
+              ? [
+            BoxShadow(
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.18),
+              blurRadius: 8,
+            ),
+          ]
+              : [],
+        ),
+
+        child:TextField(
           controller: controller,
           obscureText: obscureText,
-
+          textAlignVertical: TextAlignVertical.center,
           style: TextStyle(
             color: Colors.white,
             fontSize: Dimensions.calculateHeight(15, context),
@@ -290,7 +438,14 @@ class _LoginPageState extends State<LoginPage> {
 
           decoration: InputDecoration(
             hintText: hintText,
-
+            suffixIcon: isPasswordField ? IconButton(
+              icon:  Icon(obscurePassword ? Icons.visibility_off : Icons.visibility),
+              color: Colors.white54,
+              onPressed: (){
+                setState(() {
+                  this.obscurePassword = !this.obscurePassword;
+                });
+              },) : null,
             hintStyle: TextStyle(
               color: Colors.white.withValues(alpha: 0.28),
               fontSize: Dimensions.calculateHeight(14, context),
@@ -303,6 +458,7 @@ class _LoginPageState extends State<LoginPage> {
             border: InputBorder.none,
           ),
         ),
+
       ),
     );
   }
