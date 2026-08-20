@@ -184,7 +184,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              exercise.exerciseDefinition.name,
+                              exercise.exerciseDefinition.exerciseName,
                               style: TextStyle(
                                 color: const Color(0xFFAAA6FF),
                                 fontSize: Dimensions.calculateHeight(

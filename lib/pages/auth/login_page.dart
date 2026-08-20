@@ -1,6 +1,6 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/controller/auth_controller.dart';
-import 'package:fitness_mvp/data/controller/exercise_controller.dart';
+import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({
     super.key,
     required this.authController,
-    required this.exerciseController,
+    required this.exerciseDefinitionController,
     required this.activeWorkoutController,
     required this.workoutHistoryController,
   });
@@ -22,7 +22,7 @@ class LoginPage extends StatefulWidget {
   final AuthController authController;
   final WorkoutHistoryController workoutHistoryController;
   final ActiveWorkoutController activeWorkoutController;
-  final ExerciseController exerciseController;
+  final ExerciseDefinitionController exerciseDefinitionController;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -213,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                       });
 
                       if (error == null) {
+                       await widget.exerciseDefinitionController.getAllExercises();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -221,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                                   widget.activeWorkoutController,
                               workoutHistoryController:
                                   widget.workoutHistoryController,
-                              exerciseController: widget.exerciseController,
+                              exerciseDefinitionController: widget.exerciseDefinitionController,
                             ),
                           ),
                         );
@@ -289,8 +290,8 @@ class _LoginPageState extends State<LoginPage> {
                                           widget.activeWorkoutController,
                                       workoutHistoryController:
                                           widget.workoutHistoryController,
-                                      exerciseController:
-                                          widget.exerciseController,
+                                      exerciseDefinitionController:
+                                          widget.exerciseDefinitionController,
                                     ),
                                   ),
                                 );

@@ -1,34 +1,30 @@
 class ExerciseDefinition {
   final int id;
-  String type;
-  String name;
+  String exerciseType;
+  String exerciseName;
   String muscleGroup;
   bool archived;
 
   ExerciseDefinition({
     required this.id,
-    this.type = "SYSTEM",
-    required this.name,
+    this.exerciseType = "SYSTEM",
+    required this.exerciseName,
     required this.muscleGroup,
     this.archived = false,
   });
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['id'] = id;
-    json['type'] = type;
-    json['name'] = name;
+    json['exerciseName'] = exerciseName;
     json['muscleGroup'] = muscleGroup;
-    json['archived'] = archived;
-
     return json;
   }
 
   factory ExerciseDefinition.fromJson(Map<String, dynamic> json) {
     return ExerciseDefinition(
       id: json['id'],
-      name: json['name'],
-      type: json['type'] ?? 'SYSTEM',
+      exerciseName: json['exerciseName'],
+      exerciseType: json['exerciseType'] ?? 'SYSTEM',
       archived: json['archived'] ?? false,
       muscleGroup: json['muscleGroup'],
     );

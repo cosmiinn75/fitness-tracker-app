@@ -79,7 +79,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.workoutExerciseDraft.exerciseDefinition.name,
+                      widget.workoutExerciseDraft.exerciseDefinition.exerciseName,
 
                       style: TextStyle(
                         color: Colors.white,

@@ -150,4 +150,31 @@ class AuthRepository {
       return "Could not connect to the server";
     }
   }
+
+  Future<bool> checkSession() async{
+
+    final refreshToken = await tokenStorage.getRefreshToken();
+
+    if (refreshToken == null) {
+      await tokenStorage.deleteTokens();
+      return false;
+    }
+
+    try{
+      final response = await refresh();
+
+      if(response == null){
+        return true;
+      }
+
+      await tokenStorage.deleteTokens();
+
+      return false;
+
+    } catch(e){
+      return false;
+    }
+
+
+  }
 }

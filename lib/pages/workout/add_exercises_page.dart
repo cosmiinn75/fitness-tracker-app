@@ -1,4 +1,5 @@
-import 'package:fitness_mvp/data/controller/exercise_controller.dart';
+import 'package:fitness_mvp/data/DTO/create_exercise_request.dart';
+import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
 import 'package:fitness_mvp/data/model/exercise_definition.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
@@ -8,11 +9,11 @@ class AddExercisesPage extends StatefulWidget {
   const AddExercisesPage({
     super.key,
     required this.unavailableExercises,
-    required this.exerciseController
+    required this.exerciseDefinitionController
   });
 
   final Set<int> unavailableExercises;
-  final ExerciseController exerciseController;
+  final ExerciseDefinitionController exerciseDefinitionController;
 
   @override
   State<AddExercisesPage> createState() =>
@@ -257,17 +258,18 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                     foregroundColor: Colors.white,
                   ),
 
-                  onPressed: () {
+                  onPressed: () async{
                     final String exerciseName =
                     nameController.text.trim();
 
                     if (exerciseName.isEmpty ||
                         selectedGroup == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please complete both fields")));
                       return;
                     }
 
 
-                    if (widget.exerciseController.exerciseExists(exerciseName, selectedGroup!)) {
+                    if (widget.exerciseDefinitionController.exerciseExists(exerciseName, selectedGroup!)) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("An exercise with this name already exists."),
@@ -278,16 +280,12 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
 
 
-
-                    final ExerciseDefinition exercise =
-                    ExerciseDefinition(
-                      id: widget.exerciseController.exercises.length+1,
-                      type: "CUSTOM",
-                      name: exerciseName,
-                      muscleGroup: selectedGroup!,
-                    );
+                    ExerciseDefinition exercise = await widget.exerciseDefinitionController.createExercise(CreateExerciseRequest(exerciseName: exerciseName, muscleGroup: selectedGroup!.toUpperCase()));
 
 
+                    if(!mounted){
+                      return;
+                    }
 
                     Navigator.pop(
                       dialogContext,
@@ -309,22 +307,22 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
       },
     );
 
-    nameController.dispose();
-
     if (newExercise != null) {
       setState(() {
-        widget.exerciseController.addExercise(newExercise);
         selectedExercises.add(newExercise);
         print("added exercise");
       });
     }
+
+    nameController.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
     final List<ExerciseDefinition> filteredExercises =
-    widget.exerciseController.exercises.where((exercise) {
-      final bool matchesSearch = exercise.name
+    widget.exerciseDefinitionController.exercises.where((exercise) {
+      final bool matchesSearch = exercise.exerciseName
           .toLowerCase()
           .contains(
         searchQuery.trim().toLowerCase(),
@@ -1143,7 +1141,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                           children: [
                             Expanded(
                               child: Text(
-                                exercise.name,
+                                exercise.exerciseName,
 
                                 overflow:
                                 TextOverflow

@@ -1,3 +1,4 @@
+import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/home/home_page.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 
 import '../../data/controller/active_workout_controller.dart';
 import '../../data/controller/auth_controller.dart';
-import '../../data/controller/exercise_controller.dart';
 import '../../data/controller/workout_history_controller.dart';
 
 class SignupPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class SignupPage extends StatefulWidget {
   const SignupPage({
     super.key,
     required this.authController,
-    required this.exerciseController,
+    required this.exerciseDefinitionController,
     required this.activeWorkoutController,
     required this.workoutHistoryController,
   });
@@ -22,7 +22,7 @@ class SignupPage extends StatefulWidget {
   final AuthController authController;
   final WorkoutHistoryController workoutHistoryController;
   final ActiveWorkoutController activeWorkoutController;
-  final ExerciseController exerciseController;
+  final ExerciseDefinitionController exerciseDefinitionController;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -256,14 +256,16 @@ class _SignupPageState extends State<SignupPage> {
                       });
 
                       if (error == null) {
+
+                        await widget.exerciseDefinitionController.getAllExercises();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (
                             context) =>
                             HomePage(activeWorkoutController: widget
                                 .activeWorkoutController,
                                 workoutHistoryController: widget
                                     .workoutHistoryController,
-                                exerciseController: widget
-                                    .exerciseController)));
+                                exerciseDefinitionController: widget
+                                    .exerciseDefinitionController)));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(error))

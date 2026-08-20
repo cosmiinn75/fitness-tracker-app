@@ -1,4 +1,5 @@
-import 'package:fitness_mvp/data/controller/exercise_controller.dart';
+
+import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/data/model/exercise_definition.dart';
 import 'package:fitness_mvp/data/model/workout_draft.dart';
@@ -7,10 +8,10 @@ import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:flutter/material.dart';
 
 class ViewExercisesPage extends StatefulWidget {
-  const ViewExercisesPage({super.key, required this.workoutHistoryController, required this.exerciseController});
+  const ViewExercisesPage({super.key, required this.workoutHistoryController, required this.exerciseDefinitionController});
 
   final WorkoutHistoryController workoutHistoryController;
-  final ExerciseController exerciseController;
+  final ExerciseDefinitionController exerciseDefinitionController;
 
   @override
   State<ViewExercisesPage> createState() => _ViewExercisesPageState();
@@ -35,17 +36,17 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
   Widget build(BuildContext context) {
 
     final List<ExerciseDefinition> filteredExercises =
-    widget.exerciseController.exercises.where((exercise) {
+    widget.exerciseDefinitionController.exercises.where((exercise) {
 
       final bool matchesSearch =
-      exercise.name
+      exercise.exerciseName
           .toLowerCase()
           .contains(searchQuery.trim().toLowerCase());
 
       final bool matchesMuscleGroup =
           selectedMuscleGroup == null ||
-              exercise.muscleGroup ==
-                  muscleGroups[selectedMuscleGroup!];
+              exercise.muscleGroup.toLowerCase() ==
+                  muscleGroups[selectedMuscleGroup!].toLowerCase();
 
       return matchesSearch && matchesMuscleGroup;
     }).toList();
@@ -486,7 +487,7 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
                               children: [
 
                                 Text(
-                                  exercise.name,
+                                  exercise.exerciseName,
 
                                   style: TextStyle(
                                     color: Colors.white,
@@ -594,7 +595,7 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        exercise.name,
+                        exercise.exerciseName,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize:

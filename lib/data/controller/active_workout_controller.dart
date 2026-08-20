@@ -160,13 +160,13 @@ class ActiveWorkoutController {
 
     for(final exercise in activeWorkout!.exercises){
       if(exercise.sets.isEmpty){
-        return "${exercise.exerciseDefinition.name} has no sets.";
+        return "${exercise.exerciseDefinition.exerciseName} has no sets.";
       }
 
       final bool hasCompletedSet = exercise.sets.any((set) => set.reps != null && set.reps! > 0);
 
       if(!hasCompletedSet){
-        return "Complete at least one set for ${exercise.exerciseDefinition.name}.";
+        return "Complete at least one set for ${exercise.exerciseDefinition.exerciseName}.";
       }
 
     }

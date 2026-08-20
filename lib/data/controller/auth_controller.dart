@@ -30,4 +30,13 @@ class AuthController {
   Future<String?> refresh() async{
     return await authRepository.refresh();
   }
+
+  Future<String?> logout() async{
+    return await authRepository.logout();
+  }
+
+  Future<bool> checkSession() async{
+    return await authRepository.checkSession();
+  }
+
 }
