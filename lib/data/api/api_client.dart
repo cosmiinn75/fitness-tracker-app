@@ -118,4 +118,41 @@ class ApiClient {
       return "Could not connect to the server.";
     }
   }
+
+
+  Future<http.Response> delete(
+      String endpoint, {
+        bool authenticated = true,
+        bool retryAllowed = true
+      }) async {
+    final Map<String, String> headers = {"Content-Type": "application/json"};
+
+    if (authenticated) {
+      final String? accessToken = await tokenStorage.getAccessToken();
+
+      if (accessToken != null) {
+        headers["Authorization"] = "Bearer $accessToken";
+      }
+
+      final response = await client.delete(
+        Uri.parse("$baseUrl$endpoint"),
+        headers: headers,
+      );
+
+      if(response.statusCode == 401 && retryAllowed){
+        final error = await refresh();
+
+        if(error == null){
+          return delete(endpoint,authenticated: authenticated,retryAllowed: false);
+        }
+
+      }
+      return response;
+    }
+
+    return await client.delete(
+      Uri.parse("$baseUrl$endpoint"),
+      headers: headers,
+    );
+  }
 }

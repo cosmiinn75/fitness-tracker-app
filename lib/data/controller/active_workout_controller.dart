@@ -144,7 +144,9 @@ class ActiveWorkoutController {
     try {
       await workoutRepository.createWorkout(activeWorkout!);
     }
-      catch(e){
+      catch(e,stackTrace){
+        print("ERROR: $e");
+        print(stackTrace);
     return "Could not save workout.";
       }
 

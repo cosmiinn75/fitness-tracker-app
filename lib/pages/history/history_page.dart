@@ -16,6 +16,22 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  late final ScrollController scrollController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        loadContent();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,19 +101,114 @@ class _HistoryPageState extends State<HistoryPage> {
                       padding: EdgeInsets.symmetric(
                         horizontal: Dimensions.calculateWidth(20, context),
                       ),
+                      controller: scrollController,
                       itemCount:
-                          widget.workoutHistoryController.workouts.length,
+                          widget.workoutHistoryController.workouts.length +
+                          (widget.workoutHistoryController.isLoading ? 1 : 0),
                       itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            showWorkoutDetails(
-                              context,
-                              widget.workoutHistoryController.workouts[index],
+                        if (index ==
+                            widget.workoutHistoryController.workouts.length) {
+                          return Padding(
+                            padding: EdgeInsets.all(
+                              Dimensions.calculateHeight(20, context),
+                            ),
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+                        final workout = widget.workoutHistoryController.workouts[index];
+                        return Dismissible(
+                          direction: DismissDirection.endToStart,
+                          key: ValueKey(
+                            workout.id,
+                          ),
+                          background: Container(
+                            margin: EdgeInsets.only(
+                              bottom: Dimensions.calculateHeight(8, context),
+                            ),
+
+                            padding: EdgeInsets.only(
+                              right: Dimensions.calculateWidth(18, context),
+                            ),
+
+                            alignment: Alignment.centerRight,
+
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFB83A4B),
+
+                              borderRadius: BorderRadius.circular(
+                                Dimensions.calculateHeight(14, context),
+                              ),
+                            ),
+
+                            child: Icon(
+                              Icons.delete_outline_rounded,
+                              color: Colors.white,
+                              size: Dimensions.calculateHeight(24, context),
+                            ),
+                          ),
+                          confirmDismiss: (direction) async {
+                            bool? shouldDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (dialogContext) {
+                                return AlertDialog(
+                                  backgroundColor: AppColors.background,
+                                  title: const Text(
+                                    "Delete workout?",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  content: Text(
+                                    "Are you sure you want to delete workout",
+                                    style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext, false);
+                                      },
+                                      child: const Text("Cancel", style: TextStyle(color:  Color(0xFF8A84FF)),),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext, true);
+                                      },
+                                      child: const Text("Delete", style: TextStyle(color:  Color(0xFF8A84FF)),),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
+
+                            if (shouldDelete != true) {
+                              return false;
+                            }
+                            final error = await widget.workoutHistoryController
+                                .deleteWorkout(
+                                  workout
+                                      .id,
+                                );
+
+
+                            return error == null;
                           },
-                          child: WorkoutHistoryCard(
-                            workout:
+                          onDismissed: (direction){
+                            setState(() {
+
+                            });
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              showWorkoutDetails(
+                                context,
                                 widget.workoutHistoryController.workouts[index],
+                              );
+                            },
+                            child: WorkoutHistoryCard(
+                              workout: widget
+                                  .workoutHistoryController
+                                  .workouts[index],
+                            ),
                           ),
                         );
                       },
@@ -295,5 +406,15 @@ class _HistoryPageState extends State<HistoryPage> {
       color: Colors.white,
       fontSize: Dimensions.calculateHeight(14, context),
     );
+  }
+
+  Future<void> loadContent() async {
+    setState(() {});
+
+    await widget.workoutHistoryController.loadWorkouts();
+
+    if (!mounted) return;
+
+    setState(() {});
   }
 }

@@ -51,4 +51,19 @@ class WorkoutHistoryController {
 
     }
 
+    Future<String?> deleteWorkout(int workoutId) async{
+
+      final String? error= await workoutRepository.deleteWorkout(workoutId);
+
+      if(error != null){
+        return error;
+      }
+
+      workouts.removeWhere((workout)=> workout.id == workoutId);
+
+
+
+      return null;
+    }
+
 }

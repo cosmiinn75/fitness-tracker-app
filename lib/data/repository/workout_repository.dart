@@ -47,22 +47,37 @@ class WorkoutRepository {
 
   Future<CreateWorkoutResponse> createWorkout(WorkoutDraft workoutDraft) async{
       WorkoutRequest request =WorkoutMapper.toRequest(workoutDraft);
-      print("salut");
+
 
       final response = await apiClient.post("/workouts", body: request.toJson());
 
-      print("wow");
+
       if(response.statusCode != 201){
         throw Exception("Something went wrong");
       }
 
-      print("salutare iar");
+
 
       return CreateWorkoutResponse.fromJson(jsonDecode(response.body) as Map<String,dynamic>);
 
   }
 
 
+  Future<String?> deleteWorkout(int workoutId) async {
+    try {
+      final response = await apiClient.delete(
+        "/workouts/$workoutId",
+      );
+
+      if (response.statusCode == 204) {
+        return null;
+      }
+
+      return "Could not delete workout.";
+    } catch (e) {
+      return "Could not connect to the server.";
+    }
+  }
 
 
 }
