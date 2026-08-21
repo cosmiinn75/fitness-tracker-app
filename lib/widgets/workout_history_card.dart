@@ -1,4 +1,4 @@
-import 'package:fitness_mvp/data/model/workout_draft.dart';
+import 'package:fitness_mvp/data/DTO/workout_response.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/dimensions.dart';
@@ -9,7 +9,7 @@ class WorkoutHistoryCard extends StatelessWidget {
     required this.workout,
   });
 
-  final WorkoutDraft workout;
+  final WorkoutResponse workout;
 
   @override
   Widget build(BuildContext context) {

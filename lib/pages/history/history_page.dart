@@ -1,8 +1,7 @@
+import 'package:fitness_mvp/data/DTO/workout_response.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
-import 'package:fitness_mvp/data/model/workout_draft.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/widgets/workout_history_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../helper/dimensions.dart';
@@ -110,7 +109,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  void showWorkoutDetails(BuildContext context, WorkoutDraft workout) {
+  void showWorkoutDetails(BuildContext context, WorkoutResponse workout) {
     showDialog(
       context: context,
       builder: (context) {
@@ -184,7 +183,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              exercise.exerciseDefinition.exerciseName,
+                              exercise.exerciseName,
                               style: TextStyle(
                                 color: const Color(0xFFAAA6FF),
                                 fontSize: Dimensions.calculateHeight(

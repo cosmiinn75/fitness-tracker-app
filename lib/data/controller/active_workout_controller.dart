@@ -3,6 +3,7 @@ import 'package:fitness_mvp/data/model/exercise_definition.dart';
 import 'package:fitness_mvp/data/model/exercise_set_draft.dart';
 import 'package:fitness_mvp/data/model/workout_draft.dart';
 import 'package:fitness_mvp/data/model/workout_exercise_draft.dart';
+import 'package:fitness_mvp/data/repository/workout_repository.dart';
 import 'package:fitness_mvp/data/storage/active_workout_storage.dart';
 
 class ActiveWorkoutController {
@@ -10,8 +11,9 @@ class ActiveWorkoutController {
   WorkoutDraft? activeWorkout;
   final ActiveWorkoutStorage activeWorkoutStorage;
   final WorkoutHistoryController workoutHistoryController;
+  final WorkoutRepository workoutRepository;
 
-  ActiveWorkoutController({ required this.activeWorkoutStorage, this.activeWorkout, required this.workoutHistoryController});
+  ActiveWorkoutController({ required this.activeWorkoutStorage, this.activeWorkout, required this.workoutHistoryController, required this.workoutRepository});
 
   void saveActiveWorkout(){
     if(activeWorkout == null){
@@ -127,7 +129,7 @@ class ActiveWorkoutController {
     saveActiveWorkout();
   }
 
-  String? finishWorkout(){
+  Future<String?> finishWorkout() async{
 
       String? error = validateWorkout();
 
@@ -139,12 +141,20 @@ class ActiveWorkoutController {
         activeWorkout!.workoutName = "Afternoon workout";
       }
 
-      workoutHistoryController.addWorkout(activeWorkout!);
+    try {
+      await workoutRepository.createWorkout(activeWorkout!);
+    }
+      catch(e){
+    return "Could not save workout.";
+      }
 
-      deleteActiveWorkout();
+    deleteActiveWorkout();
 
-      return null;
+    try{
+      await workoutHistoryController.reloadWorkouts();
+    }catch(e){
 
+    }
 
 
   }
@@ -161,9 +171,12 @@ class ActiveWorkoutController {
     for(final exercise in activeWorkout!.exercises){
       if(exercise.sets.isEmpty){
         return "${exercise.exerciseDefinition.exerciseName} has no sets.";
+
       }
 
       final bool hasCompletedSet = exercise.sets.any((set) => set.reps != null && set.reps! > 0);
+
+
 
       if(!hasCompletedSet){
         return "Complete at least one set for ${exercise.exerciseDefinition.exerciseName}.";

@@ -331,7 +331,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
       final bool matchesMuscleGroup =
           selectedMuscleGroup == null ||
               exercise.muscleGroup ==
-                  muscleGroups[selectedMuscleGroup!];
+                  muscleGroups[selectedMuscleGroup!].toUpperCase();
 
       return matchesSearch &&
           matchesMuscleGroup;

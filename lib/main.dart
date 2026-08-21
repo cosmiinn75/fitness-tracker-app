@@ -6,6 +6,7 @@ import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart'
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/data/repository/auth_repository.dart';
 import 'package:fitness_mvp/data/repository/exercise_definition_repository.dart';
+import 'package:fitness_mvp/data/repository/workout_repository.dart';
 import 'package:fitness_mvp/data/storage/active_workout_storage.dart';
 import 'package:fitness_mvp/data/storage/token_storage.dart';
 import 'package:fitness_mvp/pages/auth/login_page.dart';
@@ -32,18 +33,23 @@ void main() async{
   final apiClient = ApiClient(baseUrl: "http://192.168.31.194:8080/api", tokenStorage: tokenStorage, client: http.Client());
   final authRepository = AuthRepository(apiClient: apiClient, tokenStorage: tokenStorage);
   final exerciseDefinitionRepository = ExerciseDefinitionRepository(apiClient: apiClient);
+  final workoutRepository = WorkoutRepository(apiClient: apiClient);
 
 
   final exerciseDefinitionController = ExerciseDefinitionController(exerciseDefinitionRepository: exerciseDefinitionRepository);
 
 
-  final workoutHistoryController = WorkoutHistoryController();
+  final workoutHistoryController = WorkoutHistoryController(workoutRepository: workoutRepository);
 
   final authController = AuthController(authRepository: authRepository);
 
-  final activeWorkoutController = ActiveWorkoutController(activeWorkoutStorage: activeWorkoutStorage  ,workoutHistoryController: workoutHistoryController);
+  final activeWorkoutController = ActiveWorkoutController(activeWorkoutStorage: activeWorkoutStorage  ,workoutHistoryController: workoutHistoryController , workoutRepository: workoutRepository);
 
   activeWorkoutController.loadActiveWorkout();
+
+  if(workoutHistoryController.currentPage == 0){
+  workoutHistoryController.loadWorkouts();
+  }
 
   runApp(MyApp(activeWorkoutController: activeWorkoutController ,workoutHistoryController: workoutHistoryController,exerciseDefinitionController: exerciseDefinitionController,authController: authController));
 }

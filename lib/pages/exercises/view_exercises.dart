@@ -31,7 +31,6 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
   String searchQuery = "";
   int? selectedMuscleGroup;
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -45,8 +44,8 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
 
       final bool matchesMuscleGroup =
           selectedMuscleGroup == null ||
-              exercise.muscleGroup.toLowerCase() ==
-                  muscleGroups[selectedMuscleGroup!].toLowerCase();
+              exercise.muscleGroup ==
+                  muscleGroups[selectedMuscleGroup!].toUpperCase();
 
       return matchesSearch && matchesMuscleGroup;
     }).toList();
@@ -565,7 +564,7 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
       ExerciseDefinition exercise,
       ) {
     final workouts = widget.workoutHistoryController
-        .getWorkoutsForExercise(exercise.id);
+        .getWorkoutsForExercise(exercise.exerciseName);
 
     showDialog(
       context: context,
@@ -672,8 +671,8 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
                         final workoutExercise =
                         workout.exercises.firstWhere(
                               (e) =>
-                          e.exerciseDefinition.id ==
-                              exercise.id,
+                          e.exerciseName ==
+                              exercise.exerciseName,
                         );
 
                         return Container(
@@ -865,5 +864,6 @@ class _ViewExercisesPageState extends State<ViewExercisesPage> {
       fontSize: Dimensions.calculateHeight(14, context),
     );
   }
+
 
 }

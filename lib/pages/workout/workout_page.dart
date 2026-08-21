@@ -432,8 +432,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   });
                 },
 
-                onTap:  () {
-                    final error = widget.activeWorkoutController.finishWorkout();
+                onTap:  () async {
+                    final error =await widget.activeWorkoutController.finishWorkout();
+
+                    if(!mounted){
+                      return;
+                    }
+
                     if(error != null){
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
                       return;
