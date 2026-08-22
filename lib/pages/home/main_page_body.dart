@@ -1,5 +1,6 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
+import 'package:fitness_mvp/data/controller/user_controller.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/workout/workout_page.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,14 @@ import 'package:flutter/material.dart';
 class MainPageBody extends StatefulWidget {
   final ActiveWorkoutController activeWorkoutController;
   final ExerciseDefinitionController exerciseDefinitionController;
+  final UserController userController;
 
-  const MainPageBody({super.key, required this.activeWorkoutController, required this.exerciseDefinitionController});
+  const MainPageBody({
+    super.key,
+    required this.userController,
+    required this.activeWorkoutController,
+    required this.exerciseDefinitionController,
+  });
 
   @override
   State<MainPageBody> createState() => _MainPageBodyState();
@@ -138,7 +145,10 @@ class _MainPageBodyState extends State<MainPageBody> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => WorkoutPage(
-                    activeWorkoutController: widget.activeWorkoutController,exerciseDefinitionController: widget.exerciseDefinitionController,
+                    activeWorkoutController: widget.activeWorkoutController,
+                    exerciseDefinitionController:
+                        widget.exerciseDefinitionController,
+                    userController: widget.userController,
                   ),
                 ),
               );
@@ -266,7 +276,10 @@ class _MainPageBodyState extends State<MainPageBody> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => WorkoutPage(
-                    activeWorkoutController: widget.activeWorkoutController,exerciseDefinitionController: widget.exerciseDefinitionController,
+                    userController: widget.userController,
+                    activeWorkoutController: widget.activeWorkoutController,
+                    exerciseDefinitionController:
+                        widget.exerciseDefinitionController,
                   ),
                 ),
               );
@@ -391,7 +404,10 @@ class _MainPageBodyState extends State<MainPageBody> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => WorkoutPage(
-                      activeWorkoutController: widget.activeWorkoutController,exerciseDefinitionController: widget.exerciseDefinitionController,
+                      userController: widget.userController,
+                      activeWorkoutController: widget.activeWorkoutController,
+                      exerciseDefinitionController:
+                          widget.exerciseDefinitionController,
                     ),
                   ),
                 );

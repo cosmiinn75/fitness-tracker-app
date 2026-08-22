@@ -1,6 +1,7 @@
 import 'package:fitness_mvp/data/controller/active_workout_controller.dart';
 import 'package:fitness_mvp/data/controller/auth_controller.dart';
 import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
+import 'package:fitness_mvp/data/controller/user_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
@@ -17,12 +18,14 @@ class LoginPage extends StatefulWidget {
     required this.exerciseDefinitionController,
     required this.activeWorkoutController,
     required this.workoutHistoryController,
+    required this.userController
   });
 
   final AuthController authController;
   final WorkoutHistoryController workoutHistoryController;
   final ActiveWorkoutController activeWorkoutController;
   final ExerciseDefinitionController exerciseDefinitionController;
+  final UserController userController;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -218,6 +221,8 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => HomePage(
+                              userController: widget.userController,
+                              authController: widget.authController,
                               activeWorkoutController:
                                   widget.activeWorkoutController,
                               workoutHistoryController:
@@ -285,6 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => SignupPage(
+                                      userController:widget.userController,
                                       authController: widget.authController,
                                       activeWorkoutController:
                                           widget.activeWorkoutController,

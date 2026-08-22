@@ -66,4 +66,11 @@ class WorkoutHistoryController {
       return null;
     }
 
+    void clearHistory(){
+        workouts.clear();
+       currentPage = 0;
+       last = false;
+       isLoading = false;
+    }
+
 }

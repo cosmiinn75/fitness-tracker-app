@@ -20,6 +20,10 @@ class ExerciseDefinitionController {
     return exercise;
   }
 
+  void clearExercises(){
+    exercises.clear();
+  }
+
 
 
     bool exerciseExists(String name,String muscleGroup){

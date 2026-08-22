@@ -1,4 +1,5 @@
 import 'package:fitness_mvp/data/DTO/workout_response.dart';
+import 'package:fitness_mvp/data/controller/user_controller.dart';
 import 'package:fitness_mvp/data/controller/workout_history_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/widgets/workout_history_card.dart';
@@ -7,9 +8,10 @@ import 'package:flutter/material.dart';
 import '../../helper/dimensions.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key, required this.workoutHistoryController});
+  const HistoryPage({super.key, required this.userController,required this.workoutHistoryController});
 
   final WorkoutHistoryController workoutHistoryController;
+  final UserController userController;
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -193,6 +195,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             return error == null;
                           },
                           onDismissed: (direction){
+                            widget.userController.userInfo!.totalWorkouts--;
                             setState(() {
 
                             });

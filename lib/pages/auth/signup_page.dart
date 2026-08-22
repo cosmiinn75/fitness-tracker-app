@@ -1,4 +1,5 @@
 import 'package:fitness_mvp/data/controller/exercise_definition_controller.dart';
+import 'package:fitness_mvp/data/controller/user_controller.dart';
 import 'package:fitness_mvp/helper/app_colors.dart';
 import 'package:fitness_mvp/helper/dimensions.dart';
 import 'package:fitness_mvp/pages/home/home_page.dart';
@@ -17,12 +18,14 @@ class SignupPage extends StatefulWidget {
     required this.exerciseDefinitionController,
     required this.activeWorkoutController,
     required this.workoutHistoryController,
+    required this.userController
   });
 
   final AuthController authController;
   final WorkoutHistoryController workoutHistoryController;
   final ActiveWorkoutController activeWorkoutController;
   final ExerciseDefinitionController exerciseDefinitionController;
+  final UserController userController;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -256,11 +259,13 @@ class _SignupPageState extends State<SignupPage> {
                       });
 
                       if (error == null) {
-
                         await widget.exerciseDefinitionController.getAllExercises();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (
                             context) =>
-                            HomePage(activeWorkoutController: widget
+                            HomePage(
+                              userController: widget.userController,
+                                authController: widget.authController,
+                                activeWorkoutController: widget
                                 .activeWorkoutController,
                                 workoutHistoryController: widget
                                     .workoutHistoryController,
